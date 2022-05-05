@@ -1,0 +1,249 @@
+SQL> set serveroutput on
+SQL> declare
+  2  odd number:=0;
+  3  i number;
+  4  begin
+  5  for i in 1..100
+  6  loop
+  7  if(i mod 2!=0) then
+  8  odd:=odd+i;
+  9  end if;
+ 10  end loop;
+ 11  dbms_output.put_line('the sum of 100 odd no is'||odd);
+ 12  end;
+ 13  /
+the sum of 100 odd no is2500                                                    
+
+PL/SQL procedure successfully completed.
+
+SQL> create table employee1(id int, name varchar(255), salary int);
+
+Table created.
+
+SQL> insert into employee1 values(1, 'Dinesh', 2000);
+
+1 row created.
+
+SQL> insert into employee1 values(2, 'DineshReddy', 4000);
+
+1 row created.
+
+SQL> insert into employee1 values(3, 'D', 7000);
+
+1 row created.
+
+SQL> declare
+  2  sal number;
+  3  begin
+  4  select salary into sal from employee1 where id=2;
+  5  if(sal<2500) then
+  6  update employee1 set salary=salary*1.25 where id=2;
+  7  elsif(sal>=2500 and sal<5000) then
+  8  update employee1 set salary=salary*1.2 where id=2;
+  9  else
+ 10  update employee1 set salary=salary+1000 where id=2;
+ 11  end if;
+ 12  end;
+ 13  
+ 14  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from employee1;
+
+        ID                                                                      
+----------                                                                      
+NAME                                                                            
+--------------------------------------------------------------------------------
+    SALARY                                                                      
+----------                                                                      
+         1                                                                      
+Dinesh                                                                          
+      2000                                                                      
+                                                                                
+         2                                                                      
+DineshReddy                                                                     
+      4800                                                                      
+
+        ID                                                                      
+----------                                                                      
+NAME                                                                            
+--------------------------------------------------------------------------------
+    SALARY                                                                      
+----------                                                                      
+                                                                                
+         3                                                                      
+D                                                                               
+      7000                                                                      
+                                                                                
+
+SQL> select * from dept;
+
+    DEPTNO DNAME                LOC                                             
+---------- -------------------- --------------------                            
+        10 CSE                  TECHPARK                                        
+        20 ECE                  MAIN BLOCK                                      
+        30 IT                   UB                                              
+        40 MECH                 KTR                                             
+
+SQL> begin
+  2  UPDATE DEPT SET DNAME='HRD' WHERE DNAME NOT LIKE 'HRD' AND
+  3  DEPTNO=71;
+  4  IF SQL%FOUND THEN
+  5  DBMS_OUTPUT.PUT_LINE('UPDATED');
+  6  ELSIF SQL%NOTFOUND THEN
+  7  DBMS_OUTPUT.PUT_LINE('NAME IS ALREADY HRD');
+  8  END IF;
+  9  END;
+ 10  /
+NAME IS ALREADY HRD                                                             
+
+PL/SQL procedure successfully completed.
+
+SQL> create table emp(eno int, ename varchar(255),sal int, comm int);
+
+Table created.
+
+SQL>  insert into emp values(1,'rajesh',75000, 250);
+
+1 row created.
+
+SQL> insert into emp values(2,'ravi',100000, 500);
+
+1 row created.
+
+SQL> insert into emp values(2,'dinesh',90000, 400);
+
+1 row created.
+
+SQL> insert into emp values(2,'d',99000, 900);
+
+1 row created.
+
+SQL> declare
+  2  cursor emp_comm_sal is select sal,comm from emp;
+  3  total_wages number := 0;
+  4  begin
+  5  for x in emp_comm_sal loop
+  6  total_wages := total_wages + x.sal + x.comm;
+  7  end loop;
+  8  dbms_output.put_line('total wages of company is ' || total_wages);
+  9  end;
+ 10  /
+total wages of company is 366050                                                
+
+PL/SQL procedure successfully completed.
+
+SQL> select sum(sal+comm) as total_wages from emp;
+
+TOTAL_WAGES                                                                     
+-----------                                                                     
+     366050                                                                     
+
+SQL> declare
+  2  cursor emp_comm_sal is select sal,comm from emp;
+  3  counts number := 0;
+  4  begin
+  5  for x in emp_comm_sal loop
+  6  if x.sal > 2000 then
+  7  counts := counts + 1;
+  8  end if;
+  9  end loop;
+ 10  
+ 11  dbms_output.put_line('total number of highly paid employees (salary > 2000) are '||counts);
+ 12  end;
+ 13  /
+total number of highly paid employees (salary > 2000) are 4                     
+
+PL/SQL procedure successfully completed.
+
+SQL> select count(*) from emp where sal>2000;
+
+  COUNT(*)                                                                      
+----------                                                                      
+         4                                                                      
+
+SQL> declare
+  2  cursor emp_comm_sal is select sal,comm from emp;
+  3  counts number := 0;
+  4  begin
+  5  for x in emp_comm_sal loop
+  6  if x.comm > x.sal then
+  7  counts := counts + 1;
+  8  end if;
+  9  end loop;
+ 10  dbms_output.put_line('total number of employees who get commission that is higher than their salary are  '||counts);
+ 11  end;
+ 12  /
+total number of employees who get commission that is higher than their salary   
+are  0                                                                          
+
+PL/SQL procedure successfully completed.
+
+SQL> create table employees2( emp_name varchar(255), job varchar(255), hiredate date);
+
+Table created.
+
+SQL>  insert into employees2 values('raju', 'manager', '12-march-1980');
+
+1 row created.
+
+SQL>  insert into employees2 values('ravi', 'chief executive', '12-march-2010');
+
+1 row created.
+
+SQL> insert into employees2 values('rama', 'senior manager', '22-june-1989');
+
+1 row created.
+
+SQL> DECLARE
+  2  CURSOR EMP_CUR IS SELECT EMP_NAME,JOB,HIREDATE FROM EMPLOYEES2;
+  3  TOTALEMP NUMBER := 0;
+  4  BEGIN
+  5  FOR X IN EMP_CUR LOOP
+  6  IF (EXTRACT(YEAR FROM SYSDATE)-EXTRACT(YEAR FROM X.HIREDATE)) > 28
+  7  THEN
+  8  DBMS_OUTPUT.PUT_LINE(X.EMP_NAME||' '||X.JOB);
+  9  TOTALEMP := TOTALEMP + 1;
+ 10  END IF;
+ 11  END LOOP;
+ 12  DBMS_OUTPUT.PUT_LINE('TOTAL NO OF EMPLOYEES WITH MORE 28 YEARS OF EXPERIENCE ARE '||TOTALEMP);
+ 13  END;
+ 14  /
+raju manager                                                                    
+rama senior manager                                                             
+TOTAL NO OF EMPLOYEES WITH MORE 28 YEARS OF EXPERIENCE ARE 2                    
+
+PL/SQL procedure successfully completed.
+
+SQL> CREATE OR REPLACE TRIGGER D
+  2  BEFORE INSERT ON EMP
+  3  FOR EACH ROW
+  4  DECLARE
+  5  CURSOR C IS SELECT * FROM EMP;
+  6  X EMP%ROWTYPE;
+  7  BEGIN
+  8  OPEN C;
+  9  LOOP
+ 10  FETCH C INTO X;
+ 11  IF NEW.EMPNO = X.EMPNO THEN
+ 12  DBMS_OUTPUT.PUT_LINE('YOU ENTERED DUPLICATED NO');
+ 13  ELSIF NEW.EMPNO IS NULL THEN
+ 14  DBMS_OUTPUT.PUT_LINE('EMPNO CANT BE NULL');
+ 15  END IF;
+ 16  EXIT WHEN C%NOTFOUND;
+ 17  END LOOP;
+ 18  CLOSE C;
+ 19  END;
+ 20  /
+
+Warning: Trigger created with compilation errors.
+
+SQL> insert into emp values(2,'dinesh',90000, 400);
+insert into emp values(2,'dinesh',90000, 400)
+            *
+ERROR at line 1:
+ORA-04098: trigger 'SYSTEM.D' is invalid and failed re-validation 
+
+
+SQL> spool off;
